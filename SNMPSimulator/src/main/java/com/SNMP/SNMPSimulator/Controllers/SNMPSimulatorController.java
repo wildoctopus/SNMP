@@ -18,6 +18,8 @@ import com.SNMP.SNMPSimulator.Services.SNMPSimulatorService;
 @CrossOrigin(origins = { "*" })
 public class SNMPSimulatorController {
 
+	@Value("${fileupload-destination}")
+	private String fileDestination;
 	
 	@Autowired
 	private FileUploadService fileUploadService;
@@ -47,24 +49,23 @@ public class SNMPSimulatorController {
 		return new ResponseEntity<String>(message, HttpStatus.CREATED);
 	}
 	
-	 @DeleteMapping(value = "/deleteFile/{fileName}", produces = "application/json")
-		public SnmpJSONOutputModel deleteExcelFile(@PathVariable("fileName") String fileName) throws SnmpException{
+	@DeleteMapping(value = "/deleteFile/{fileName}", produces = "application/json")
+	public ResponseEntity<String> deleteExcelFile(@PathVariable("fileName") String fileName) throws Exception  {
 
-			try {
-				snmpSimulatorService.deleteExcelFile(fileDestination, fileName);
-				snmpSimulatorService.updateJSON(fileName);
-			} catch (Exception ex) {
-				throw new SnmpException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-			}
-			return snmpSimulatorService.prepareResponse(HttpStatus.OK, "Success", null);
+		try {
+			snmpSimulatorService.deleteExcelFile(fileDestination, fileName);
+			snmpSimulatorService.updateJSON(fileName);
+		} catch (Exception ex) {
+			throw new Exception(ex.getMessage());
 		}
-	 
-	 
-	 @GetMapping(value = "/getJSONData", produces = "application/json")
-		public SnmpJSONOutputModel getJSONData() throws JsonParseException, JsonMappingException, IOException, SnmpException {
-			String result = snmpSimulatorService.fetchJsonFileData();
-			return snmpSimulatorService.prepareResponse(HttpStatus.OK, "Success",
-					result);
-		}
+		return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+	}
+
+	@GetMapping(value = "/getJSONData", produces = "application/json")
+	public ResponseEntity<String> getJSONData()
+			throws JsonParseException, IOException{
+		String result = snmpSimulatorService.fetchJsonFileData();
+		return new ResponseEntity<String>(result, HttpStatus.CREATED);
+	}
 
 }
