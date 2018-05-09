@@ -118,5 +118,16 @@ public class SNMPSimulatorService {
 		String jsonString = FileUtils.readFileToString(jsonFile);
 		return jsonString;
 	}
+	
+	public void deleteExcelFile(String fileDestination, String fileName) {
+		
+		File file = new File(fileDestination + "\\" + fileName + ".csv");
+        if(file.delete()){
+            System.out.println(fileName +" File deleted");
+        }else System.out.println(fileDestination + "\\" + fileName + "doesn't exists");
+
+
+		
+	}
 
 }
