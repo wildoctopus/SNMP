@@ -46,5 +46,25 @@ public class SNMPSimulatorController {
 		snmpSimulatorService.addDataToJSON(file.getName(), fileDesc);
 		return new ResponseEntity<String>(message, HttpStatus.CREATED);
 	}
+	
+	 @DeleteMapping(value = "/deleteFile/{fileName}", produces = "application/json")
+		public SnmpJSONOutputModel deleteExcelFile(@PathVariable("fileName") String fileName) throws SnmpException{
+
+			try {
+				snmpSimulatorService.deleteExcelFile(fileDestination, fileName);
+				snmpSimulatorService.updateJSON(fileName);
+			} catch (Exception ex) {
+				throw new SnmpException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			}
+			return snmpSimulatorService.prepareResponse(HttpStatus.OK, "Success", null);
+		}
+	 
+	 
+	 @GetMapping(value = "/getJSONData", produces = "application/json")
+		public SnmpJSONOutputModel getJSONData() throws JsonParseException, JsonMappingException, IOException, SnmpException {
+			String result = snmpSimulatorService.fetchJsonFileData();
+			return snmpSimulatorService.prepareResponse(HttpStatus.OK, "Success",
+					result);
+		}
 
 }
